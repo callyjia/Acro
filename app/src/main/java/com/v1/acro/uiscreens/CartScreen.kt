@@ -1,6 +1,7 @@
 package com.v1.acro.uiscreens
 
 
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
-import androidx.compose.material3.AlertDialogDefaults.containerColor
+
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -29,7 +30,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ShouldPauseCallback
+
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -44,7 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.wear.compose.material.Button
+
 
 import androidx.wear.compose.material.Text
 import com.v1.acro.ui.theme.Violet
@@ -155,6 +156,11 @@ fun CartScreen(navController: NavController,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(text = "Total",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Violet
+                )
+                Text(text = "¥$totalPrice",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = Violet

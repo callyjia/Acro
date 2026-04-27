@@ -52,9 +52,10 @@ fun AppNavGraph(cartViewModel: CartViewModel) {
                 navController, startDestination = "home"
             ) {
                 composable("home") {
-                    HomeScreen()
+                    HomeScreen(navController = navController,
+                        cartViewModel = cartViewModel)
                 }
-                composable("products/{category") {
+                composable("products/{category}") {
                     ProductListScreen(it.arguments?.getString("category")!!, cartViewModel)
                 }
                 composable("cart") {
