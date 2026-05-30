@@ -2,43 +2,34 @@ package com.v1.acro.navigation
 
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.text.font.FontWeight
 
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.*
 
 
-import androidx.wear.compose.navigation.currentBackStackEntryAsState
-import com.v1.acro.uiscreens.CartScreen
-import com.v1.acro.uiscreens.HomeScreen
-import com.v1.acro.uiscreens.OrderSuccessScreen
-import com.v1.acro.uiscreens.PaymentScreen
-import com.v1.acro.uiscreens.ProductListScreen
-import com.v1.acro.uiscreens.ProfileScreen
-import com.v1.acro.uiscreens.SearchScreen
 import com.v1.acro.viewmodel.CartViewModel
+import com.v1.acro.ui.theme.*
+import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
 fun AppNavGraph(cartViewModel: CartViewModel) {
     val navController = rememberNavController()
 
     Scaffold(
+        topBar = {
+            Header(navController)
+        },
         bottomBar = {
             BottomBarNavigation(navController)
         }
@@ -52,63 +43,40 @@ fun AppNavGraph(cartViewModel: CartViewModel) {
                 navController, startDestination = "home"
             ) {
                 composable("home") {
-                    HomeScreen(navController = navController,
+                    NavContainer(navController = navController,
                         cartViewModel = cartViewModel)
-                }
-                composable("products/{category}") {
-                    ProductListScreen(it.arguments?.getString("category")!!, cartViewModel)
-                }
-                composable("cart") {
-                    CartScreen(navController, cartViewModel)
-                }
-                composable("payment") {
-                    PaymentScreen(navController)
-                }
-                composable("success") {
-                    OrderSuccessScreen(navController, cartViewModel)
-                }
-                composable("search") {
-                    SearchScreen(cartViewModel)
-                }
-                composable("profile") {
-                    ProfileScreen()
                 }
             }
         }
-
     }
 }
 
 @Composable
-fun BottomBarNavigation(navController: NavController){
+fun BottomBarNavigation(navController: NavController) {
 
     val items = listOf(
-        BottomNavItem.Home,
-        BottomNavItem.Search,
-        BottomNavItem.Cart,
-        BottomNavItem.Profile,
+        NavItem.Home,
+        NavItem.Menu
+    )
+
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+
+
+
+    val navBarItemColors = NavigationBarItemDefaults.colors(
+        indicatorColor = Color.White.copy(alpha = 0.18f)
     )
 
     NavigationBar(
-        modifier = Modifier.background(
-            Brush.verticalGradient(
-                colors = listOf(
-                    Color(0xff6a1b9a),
-                    Color(0xff8e24aa),
-                )
-            )
-        ),
+        modifier = Modifier.background(Blue),
         containerColor = Color.Transparent,
         tonalElevation = 6.dp
-
     ) {
-        val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-
         items.forEach { item ->
-            val selected = currentRoute == item.route
+            val isSelected = currentRoute == item.route
 
             NavigationBarItem(
-                selected = selected,
+                selected = isSelected,
                 onClick = {
                     navController.navigate(item.route) {
                         popUpTo(navController.graph.startDestinationId)
@@ -116,15 +84,49 @@ fun BottomBarNavigation(navController: NavController){
                     }
                 },
                 icon = {
-                    Icon(imageVector = item.icon,
-                        contentDescription = "Icon",
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = item.route,
                         tint = Color.White
                     )
                 },
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = Color.White.copy(alpha = 0.18f)
-                )
+                colors = navBarItemColors
             )
         }
+    }
+}
+
+
+@Composable
+fun NavContainer(navController: NavController,
+                 cartViewModel: CartViewModel,
+                 modifier: Modifier = Modifier
+) {
+    LazyColumn(modifier = modifier.fillMaxSize()){
+
+    }
+
+}
+
+@Composable
+fun Header(navController: NavController) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .background(Blue)
+        .padding(12.dp)
+
+    ) {
+        Row(modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "Acro",
+                color = Color.White,
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        Spacer(Modifier.height(12.dp))
+
     }
 }
