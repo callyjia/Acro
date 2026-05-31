@@ -2,25 +2,33 @@ package com.v1.acro.navigation
 
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.text.font.FontWeight
 
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.*
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
-
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.shape.*
+import androidx.compose.material.ripple.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.draw.*
 
 import com.v1.acro.viewmodel.CartViewModel
 import com.v1.acro.ui.theme.*
-import androidx.navigation.compose.currentBackStackEntryAsState
+import com.v1.acro.uiscreens.*
+
 
 @Composable
 fun AppNavGraph(cartViewModel: CartViewModel) {
@@ -43,60 +51,83 @@ fun AppNavGraph(cartViewModel: CartViewModel) {
                 navController, startDestination = "home"
             ) {
                 composable("home") {
-                    NavContainer(navController = navController,
-                        cartViewModel = cartViewModel)
+                    HomeScreen(navController = navController)
                 }
             }
         }
     }
 }
 
+
+// BOTTOM NAVIGATION BAR
 @Composable
 fun BottomBarNavigation(navController: NavController) {
-
-    val items = listOf(
-        NavItem.Home,
-        NavItem.Menu
-    )
-
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
-
-
-    val navBarItemColors = NavigationBarItemDefaults.colors(
-        indicatorColor = Color.White.copy(alpha = 0.18f)
-    )
-
-    NavigationBar(
-        modifier = Modifier.background(Blue),
-        containerColor = Color.Transparent,
-        tonalElevation = 6.dp
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MidBlue)
+            .navigationBarsPadding()
     ) {
-        items.forEach { item ->
-            val isSelected = currentRoute == item.route
+        // left and right items
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // left items
+            NavItemButton(Item.Home, currentRoute, navController)
 
-            NavigationBarItem(
-                selected = isSelected,
-                onClick = {
-                    navController.navigate(item.route) {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
-                    }
+
+            // middle spacer for FAB
+            Spacer(Modifier.width(80.dp))
+
+            // right items
+            NavItemButton(Item.Receipt, currentRoute, navController)
+        }
+
+            // Payment Button
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .offset(y = (-20).dp)
+                .size(72.dp)
+                .border(5.dp, MidBlue, RoundedCornerShape(20.dp))
+                .clip(RoundedCornerShape(20.dp))
+                .background(White)
+                .clickable (indication = ripple(color = RippleBlue),interactionSource = remember { MutableInteractionSource()})
+                {
+                    navController.navigate(Item.QR.route)
                 },
-                icon = {
-                    Icon(
-                        imageVector = item.icon,
-                        contentDescription = item.route,
-                        tint = Color.White
-                    )
-                },
-                colors = navBarItemColors
+                contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Item.QR.icon,
+                contentDescription = Item.QR.label,
+                tint = MidBlue,
+                modifier = Modifier.size(36.dp)
             )
         }
     }
 }
 
-
+@Composable
+fun NavItemButton(item: Item, currentRoute: String?, navController: NavController) {
+    val isSelected = currentRoute == item.route
+    IconButton(onClick = {
+        navController.navigate(item.route) {
+            popUpTo(navController.graph.startDestinationId)
+            launchSingleTop = true
+        }
+    }) {
+        Icon(
+            imageVector = item.icon,
+            contentDescription = item.route,
+            tint = Color.White
+        )
+    }
+}
 @Composable
 fun NavContainer(navController: NavController,
                  cartViewModel: CartViewModel,
@@ -108,12 +139,16 @@ fun NavContainer(navController: NavController,
 
 }
 
+
+//DEFAULT HEADER
 @Composable
 fun Header(navController: NavController) {
+
     Column(modifier = Modifier
         .fillMaxWidth()
-        .background(Blue)
-        .padding(12.dp)
+        .background(MidBlue)
+        .statusBarsPadding()
+        .padding(8.dp)
 
     ) {
         Row(modifier = Modifier.fillMaxWidth(),
@@ -122,11 +157,20 @@ fun Header(navController: NavController) {
         ) {
             Text(text = "Acro",
                 color = Color.White,
-                fontSize = 26.sp,
+                fontSize = 30.sp,
                 fontWeight = FontWeight.Bold
             )
+            IconButton(onClick = { /* handle click */ }) {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = "Menu",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(36.dp)
+                )
+            }
         }
         Spacer(Modifier.height(12.dp))
-
     }
+
 }
