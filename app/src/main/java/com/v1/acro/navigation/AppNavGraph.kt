@@ -48,7 +48,7 @@ fun AppNavGraph(cartViewModel: CartViewModel) {
         ) {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                 Scaffold(
-                    containerColor = Color(0xFFEAF0FB),
+                    containerColor = MaterialTheme.colorScheme.background,
                     topBar = { Header(navController, drawerState) },
                     bottomBar = { BottomBarNavigation(navController) }
                 ) { paddingValues ->

@@ -1,12 +1,10 @@
 package com.v1.acro.uiscreens
 
-import android.text.Layout
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,22 +14,57 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
 import androidx.navigation.NavController
 import com.v1.acro.navigation.Item
 import com.v1.acro.ui.theme.*
-import com.v1.acro.viewmodel.CartViewModel
+import androidx.compose.foundation.BorderStroke
 
+/**
+ * ============================================================
+ * HomeScreen.kt
+ * ============================================================
+ *
+ * Main dashboard screen — first screen users see after launch.
+ *
+ * STRUCTURE:
+ *   HomeScreen (entry point)
+ *     ├── TodaySale       → expandable card showing daily revenue
+ *     ├── OrderButton     → navigates to order creation screen
+ *     └── TaskSection     → grid of shortcut cards
+ *           └── TaskCard  → single shortcut (dynamic from Item list)
+ *
+ * DATA:
+ *   - Sales data is currently hardcoded
+ *   - Task items are pulled from Item sealed class
+ *
+ * TODO:
+ *   - Replace hardcoded sales with ViewModel + Room DB
+ *   - Add pull-to-refresh for live sales data
+ *   - Add daily/weekly/monthly chart to TodaySale
+ *
+ * NAVIGATION:
+ *   Route: "home" (startDestination in NavHost)
+ *   Outgoing: "order", Item.Product.route, Item.Receipt.route,
+ *             Item.AddProduct.route, Item.Analytics.route
+ * ============================================================
+ */
+
+/**
+ * Entry point — called from NavHost composable("home")
+ * Initializes sales data and task items, lays out dashboard
+ */
 @Composable
 fun HomeScreen(navController: NavController) {
+    // TODO: Replace with ViewModel observeAsState() when Room DB is ready
     val todaySales = "1,250.00"
     val transactionDaily = 24
     val transactionMonth = 200
     val transactionWeek = 50
+
+    // Task shortcuts — add/remove items here to update the grid automatically
     val taskItems = listOf(
         Item.Product,
         Item.Receipt,
@@ -44,7 +77,6 @@ fun HomeScreen(navController: NavController) {
             .fillMaxSize()
             .padding(16.dp),
     ) {
-
         Spacer(modifier = Modifier.height(8.dp))
 
         TodaySale(
@@ -55,9 +87,7 @@ fun HomeScreen(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        OrderButton(
-            navController = navController
-        )
+        OrderButton(navController = navController)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -68,13 +98,25 @@ fun HomeScreen(navController: NavController) {
     }
 }
 
-
-// Today's sale button
+/**
+ * Expandable sales summary card
+ * - Default: shows today's total revenue (55% width)
+ * - Expanded: reveals daily, weekly, monthly transaction counts (60% width)
+ * - Width transition is animated via animateFloatAsState
+ * - Content transition is animated via animateContentSize
+ *
+ * @param todaySales formatted total sales string (e.g. "1,250.00")
+ * @param transactionDaily number of transactions today
+ * @param transactionWeek number of transactions this week
+ * @param transactionMonth number of transactions this month
+ */
 @Composable
-fun TodaySale(todaySales: String,
-              transactionDaily: Int,
-              transactionWeek: Int,
-              transactionMonth: Int){
+fun TodaySale(
+    todaySales: String,
+    transactionDaily: Int,
+    transactionWeek: Int,
+    transactionMonth: Int
+) {
     var isExpanded by remember { mutableStateOf(false) }
 
     val cardWidth by animateFloatAsState(
@@ -89,38 +131,50 @@ fun TodaySale(todaySales: String,
                 .animateContentSize()
                 .clickable { isExpanded = !isExpanded },
             shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(containerColor = MidBlue)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
-                Text(text = "Today's Sales", color = Color.White)
-                Spacer (modifier = Modifier.height(4.dp))
+                Text(text = "Today's Sales", color = MaterialTheme.colorScheme.onPrimary)
+                Spacer(modifier = Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.Bottom) {
-                    Text(text = "CNY.", color = Color.White, fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold)
-                    Text(text = todaySales, color = Color.White, fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold)
+                    Text(
+                        text = "CNY.", color = MaterialTheme.colorScheme.onPrimary,
+                        fontSize = 16.sp, fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = todaySales, color = MaterialTheme.colorScheme.onPrimary,
+                        fontSize = 32.sp, fontWeight = FontWeight.Bold
+                    )
                 }
-                Spacer(modifier = Modifier.height(8.dp))
                 if (isExpanded) {
-                    Text(text = "Today: $transactionDaily", color = Color.White)
-                    Text(text = "This week: $transactionWeek", color = Color.White)
-                    Text(text = "This Month: $transactionMonth", color = Color.White)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = "Today: $transactionDaily", color = MaterialTheme.colorScheme.onPrimary)
+                    Text(text = "This week: $transactionWeek", color = MaterialTheme.colorScheme.onPrimary)
+                    Text(text = "This month: $transactionMonth", color = MaterialTheme.colorScheme.onPrimary)
                 }
             }
         }
     }
 }
 
-//Make order Button
+/**
+ * Full-width button that navigates to the order creation screen
+ * Route: "order"
+ *
+ * @param navController navigation controller for routing
+ */
 @Composable
-fun OrderButton(navController: NavController){
-        Card(
+fun OrderButton(navController: NavController) {
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 8.dp)
             .clickable { navController.navigate("order") },
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(DarkerWhite)
+        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp,
+            pressedElevation = 8.dp
+        )
     ) {
         Box(
             modifier = Modifier
@@ -128,15 +182,19 @@ fun OrderButton(navController: NavController){
                 .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "Make New Order",
-                color = MidBlue
-            )
+            Text(text = "Make New Order", color = MaterialTheme.colorScheme.onSurface)
         }
     }
 }
 
-//Loop For Task
+/**
+ * Task shortcut grid — displays items in a 2-column FlowRow
+ * Dynamically generates TaskCards from the provided list
+ * To add a new shortcut: add an Item object to taskItems in HomeScreen
+ *
+ * @param taskItems list of Item objects to display as shortcuts
+ * @param navController navigation controller passed to each card's onClick
+ */
 @Composable
 fun TaskSection(
     taskItems: List<Item>,
@@ -144,14 +202,14 @@ fun TaskSection(
 ) {
     Text(
         text = "Tasks",
-        color = MidBlue,
+        color = MaterialTheme.colorScheme.onSurface,
         fontWeight = FontWeight.Bold
     )
     Spacer(modifier = Modifier.height(8.dp))
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
         maxItemsInEachRow = 2,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         taskItems.forEach { item ->
@@ -164,8 +222,15 @@ fun TaskSection(
     }
 }
 
-
-// Task display function
+/**
+ * Single task shortcut card — reusable component
+ * Displays icon and label from Item sealed class
+ * Falls back to item.route if label is null
+ *
+ * @param modifier applied to outer Column (receives weight from FlowRow)
+ * @param item Item object containing icon, label, and route
+ * @param onClick callback triggered on card tap
+ */
 @Composable
 fun TaskCard(
     modifier: Modifier = Modifier,
@@ -176,36 +241,40 @@ fun TaskCard(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
+        Card(
             modifier = Modifier
-                .fillMaxWidth(0.9f)
+                .fillMaxWidth()
                 .height(60.dp)
-                .clip(RoundedCornerShape(20.dp))
-                .background(color = White)
-                .border(2.dp, MidBlue, RoundedCornerShape(20.dp))
-
                 .clickable { onClick() },
-            contentAlignment = Alignment.Center
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.surface.copy(alpha = 0.3f)),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 4.dp,
+                pressedElevation = 8.dp
+            )
         ) {
             Column(
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 Icon(
                     imageVector = item.icon,
                     contentDescription = item.label,
-                    tint = MidBlue,
+                    tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(28.dp)
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = item.label ?: item.route,
-                    color = MidBlue,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 12.sp,
                     textAlign = TextAlign.Center,
                     lineHeight = 14.sp
                 )
-
             }
         }
     }

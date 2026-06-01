@@ -6,6 +6,11 @@ val MidBlue = Color(0xFF155da2)
 
 val RippleBlue = Color(0xFF4072a2)
 
+
+//light theme
 val White = Color(0xFFfff8f8)
 
 val DarkerWhite = Color(0xFFD8DEF3)
+
+val BgWhite = Color(0xFFEAF0FB)
+
