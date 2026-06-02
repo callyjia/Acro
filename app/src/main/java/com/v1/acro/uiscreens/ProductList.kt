@@ -276,14 +276,6 @@ fun ProductCard(product: Product, onClick: () -> Unit) {
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center
             )
-            // Product ID
-            Text(
-                text = "ID: ${product.id}",
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                modifier = Modifier.offset(y = (-2).dp)
-            )
 
             // Stock count — error color when out of stock
             Text(

@@ -62,5 +62,8 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
+    implementation(libs.coil.compose)
+    implementation(libs.mlkit.barcode)
+    implementation(libs.activity.compose)
     ksp(libs.room.compiler)
 }
