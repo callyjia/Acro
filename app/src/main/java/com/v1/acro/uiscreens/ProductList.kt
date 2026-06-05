@@ -1,5 +1,6 @@
 package com.v1.acro.uiscreens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,16 +22,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.compose.foundation.BorderStroke
-import com.v1.acro.ui.theme.*
+import com.v1.acro.database.Product.ProductData
+import com.v1.acro.viewmodel.ProductViewModel
 
 /**
  * ============================================================
  * ProductListScreen.kt
  * ============================================================
  *
- * Displays all products in a searchable, adjustable grid.
+ * Displays all products from Room DB in a searchable, adjustable grid.
  *
  * STRUCTURE:
  *   ProductList (entry point)
@@ -39,62 +41,41 @@ import com.v1.acro.ui.theme.*
  *     └── ProductGrid     → LazyVerticalGrid
  *           └── ProductCard → individual product display
  *
- * COLORS:
- *   - Brand elements (selected pill, text) → MaterialTheme.colorScheme.primary
- *   - Surfaces (cards, image placeholder) → MaterialTheme.colorScheme.surface
- *   - Secondary text (ID, stock) → MaterialTheme.colorScheme.onSurface
- *   - Out of stock → MaterialTheme.colorScheme.error
+ * DATA:
+ *   - Loads from Room DB via ProductViewModel.allProducts (StateFlow)
+ *   - Auto-updates when a product is added/deleted
+ *   - Filtering done in-memory on the collected list
  *
  * TODO:
- *   - Replace Product data class with Room entity (model/Product.kt)
- *   - Replace fakeProducts with ViewModel + Room DB
  *   - Add product image loading (Coil/Glide)
  *   - Add ProductDetail navigation on card click
  *   - Add price range filter
  *
  * NAVIGATION:
- *   Route: "Product" (defined in Item.kt)
+ *   Route: "Product"
  *   Entry: HomeScreen TaskCard → navController.navigate("Product")
  * ============================================================
  */
 
-// TODO: Move to model/Product.kt when setting up Room DB
-data class Product(
-    val id: String,
-    val name: String,
-    val price: Double,
-    val quantity: Int,
-    val imageUrl: String? = null
-)
-
-// TODO: Remove when Room DB is ready — replace with ViewModel data
-val fakeProducts = listOf(
-    Product("P001", "Indomie Goreng", 3500.0, 50),
-    Product("P002", "Aqua 600ml", 4000.0, 30),
-    Product("P003", "Teh Botol", 5000.0, 25),
-    Product("P004", "Chitato", 8000.0, 15),
-    Product("P005", "Pocari Sweat", 7500.0, 20),
-    Product("P006", "Kopi Kapal Api", 2500.0, 100),
-    Product("P007", "Milo", 6000.0, 40),
-    Product("P008", "Roma Kelapa", 4500.0, 60)
-)
-
-/**
- * Entry point — called from NavHost composable("Product")
- * Manages search state and grid column count
- */
 @Composable
-fun ProductList(navController: NavController) {
+fun ProductList(
+    navController: NavController,
+    viewModel: ProductViewModel = viewModel()
+) {
     var searchQuery by remember { mutableStateOf("") }
     var columns by remember { mutableStateOf(2) }
 
-    val filteredProducts = remember(searchQuery) {
+    // Live data from Room — recomposes when DB changes
+    val products by viewModel.allProducts.collectAsState()
+
+    // Filter in-memory based on search query
+    val filteredProducts = remember(searchQuery, products) {
         if (searchQuery.isBlank()) {
-            fakeProducts
+            products
         } else {
-            fakeProducts.filter { product ->
+            products.filter { product ->
                 product.name.contains(searchQuery, ignoreCase = true) ||
-                        product.id.contains(searchQuery, ignoreCase = true) ||
+                        product.pid.toString().contains(searchQuery) ||
                         product.price.toString().contains(searchQuery) ||
                         product.quantity.toString().contains(searchQuery)
             }
@@ -116,13 +97,29 @@ fun ProductList(navController: NavController) {
             onSelect = { columns = it }
         )
         Spacer(modifier = Modifier.height(12.dp))
-        ProductGrid(
-            products = filteredProducts,
-            columns = columns,
-            onProductClick = { product ->
-                // TODO: navController.navigate("productDetail/${product.id}")
+
+        if (filteredProducts.isEmpty()) {
+            // Empty state — no products or no search match
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = if (searchQuery.isBlank()) "No products yet"
+                    else "No results found",
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                    fontSize = 14.sp
+                )
             }
-        )
+        } else {
+            ProductGrid(
+                products = filteredProducts,
+                columns = columns,
+                onProductClick = { product ->
+                    // TODO: navController.navigate("productDetail/${product.pid}")
+                }
+            )
+        }
     }
 }
 
@@ -208,9 +205,9 @@ fun GridControls(selected: Int, onSelect: (Int) -> Unit) {
  */
 @Composable
 fun ProductGrid(
-    products: List<Product>,
+    products: List<ProductData>,
     columns: Int,
-    onProductClick: (Product) -> Unit
+    onProductClick: (ProductData) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(columns),
@@ -231,7 +228,7 @@ fun ProductGrid(
  * Single product card — surface auto-switches, stock turns error color when 0
  */
 @Composable
-fun ProductCard(product: Product, onClick: () -> Unit) {
+fun ProductCard(product: ProductData, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -242,6 +239,10 @@ fun ProductCard(product: Product, onClick: () -> Unit) {
         ),
         border = BorderStroke(
             0.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp,
+            pressedElevation = 8.dp
         )
     ) {
         Column(
@@ -254,7 +255,7 @@ fun ProductCard(product: Product, onClick: () -> Unit) {
                     .fillMaxWidth()
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.surface),
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -275,6 +276,14 @@ fun ProductCard(product: Product, onClick: () -> Unit) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center
+            )
+
+            // Product ID
+            Text(
+                text = "ID: ${product.pid}",
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
             )
 
             // Stock count — error color when out of stock

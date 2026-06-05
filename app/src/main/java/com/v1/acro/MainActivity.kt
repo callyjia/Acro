@@ -3,7 +3,6 @@ package com.v1.acro
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 
 
 import androidx.compose.material3.Text
@@ -14,7 +13,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.v1.acro.navigation.AppNavGraph
 
 import com.v1.acro.ui.theme.AcroTheme
-import com.v1.acro.viewmodel.CartViewModel
+import com.v1.acro.viewmodel.ProductViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -22,7 +21,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AcroTheme {
-                val cartViewModel: CartViewModel = viewModel()
+                val cartViewModel: ProductViewModel = viewModel()
                 AppNavGraph(cartViewModel)
             }
         }

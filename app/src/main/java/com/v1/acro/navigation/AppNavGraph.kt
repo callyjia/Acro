@@ -26,14 +26,14 @@ import androidx.compose.ui.draw.*
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 
-import com.v1.acro.viewmodel.CartViewModel
 import com.v1.acro.ui.theme.*
 import com.v1.acro.uiscreens.*
 import androidx.compose.runtime.CompositionLocalProvider
+import com.v1.acro.viewmodel.ProductViewModel
 
 
 @Composable
-fun AppNavGraph(cartViewModel: CartViewModel) {
+fun AppNavGraph(cartViewModel: ProductViewModel) {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
 
@@ -167,7 +167,7 @@ fun NavItemButton(item: Item, currentRoute: String?, navController: NavControlle
 
 @Composable
 fun NavContainer(navController: NavController,
-                 cartViewModel: CartViewModel,
+                 cartViewModel: ProductViewModel,
                  modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()){
