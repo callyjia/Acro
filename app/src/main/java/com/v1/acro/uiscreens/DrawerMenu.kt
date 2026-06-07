@@ -3,7 +3,9 @@ package com.v1.acro.uiscreens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -47,89 +49,98 @@ fun DrawerMenu(navController: NavController) {
     val themeState = LocalThemeState.current
 
     ModalDrawerSheet(
-        modifier = Modifier.clip(RectangleShape).fillMaxWidth(0.6f),
+        modifier = Modifier
+            .clip(RectangleShape)
+            .fillMaxWidth(0.6f),
         drawerShape = RectangleShape,
         drawerContainerColor = MaterialTheme.colorScheme.background
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(20.dp)
-        ) {
-            // Store Info
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Acro",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-
-
-            Spacer(modifier = Modifier.height(24.dp))
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Dark Mode Toggle
-            Row(
+        Box(modifier = Modifier.fillMaxSize()){
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(shape = RoundedCornerShape(4.dp), color = MaterialTheme.colorScheme.surface)
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+                    .verticalScroll(rememberScrollState())
+                    .padding(20.dp)
+            )
+            {
+                // Store Info
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Acro",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+
+                Spacer(modifier = Modifier.height(24.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Dark Mode Toggle
                 Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(shape = RoundedCornerShape(4.dp), color = MaterialTheme.colorScheme.surface)
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Icon(
-                        imageVector = if (themeState.isDarkMode) Icons.Default.DarkMode
-                        else Icons.Default.LightMode,
-                        contentDescription = "Theme toggle",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = if (themeState.isDarkMode) "Dark Mode" else "Light Mode",
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurface
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Icon(
+                            imageVector = if (themeState.isDarkMode) Icons.Default.DarkMode
+                            else Icons.Default.LightMode,
+                            contentDescription = "Theme toggle",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = if (themeState.isDarkMode) "Dark Mode" else "Light Mode",
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    Switch(
+                        checked = themeState.isDarkMode,
+                        onCheckedChange = { themeState.toggleDarkMode() },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                            checkedTrackColor = MaterialTheme.colorScheme.primary,
+                            uncheckedThumbColor = MaterialTheme.colorScheme.primary,
+                            uncheckedTrackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                        )
                     )
                 }
-                Switch(
-                    checked = themeState.isDarkMode,
-                    onCheckedChange = { themeState.toggleDarkMode() },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-                        checkedTrackColor = MaterialTheme.colorScheme.primary,
-                        uncheckedThumbColor = MaterialTheme.colorScheme.primary,
-                        uncheckedTrackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
-                    )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Menu Items
+                DrawerMenuItem(
+                    icon = Icons.Default.Settings,
+                    label = "Settings",
+                    onClick = { navController.navigate("settings") }
+                )
+                DrawerMenuItem(
+                    icon = Icons.Default.Info,
+                    label = "About",
+                    onClick = { navController.navigate("about") }
                 )
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Menu Items
-            DrawerMenuItem(
-                icon = Icons.Default.Settings,
-                label = "Settings",
-                onClick = { navController.navigate("settings") }
-            )
-            DrawerMenuItem(
-                icon = Icons.Default.Info,
-                label = "About",
-                onClick = { navController.navigate("about") }
-            )
-
-            // App version pinned to bottom
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = "Acro v1.0.0",
-                fontSize = 11.sp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-            )
+                // App version
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    text = "Acro v1.0.0",
+                    fontSize = 11.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(20.dp)
+                )
         }
+
     }
 }
 
