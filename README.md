@@ -15,13 +15,17 @@ Acro helps small store owners manage daily operations without needing an interne
 - Track stock quantity — **out-of-stock products show in red**
 
 ### Transaction / Cart System
-- Add products to cart (tap a product, or **scan its barcode to add it**)
+- Add products to cart (tap a product, or **scan its barcode to add it** — with a toast confirming the match)
+- Product picker shows the **product photo** and live stock
 - **Stock-aware ordering** — out-of-stock products are greyed out and cannot be added
 - **Cart popup** — open from the cart icon (with item-count badge) above the total to review the order, change quantities, or remove lines
 - Auto-calculate total price
 - **Name an order** at checkout (blank → auto-named `order{id}`)
 - Process checkout — saves the order **and every line item**
 - Auto-deduct stock after purchase
+
+### Payment
+- **Payment QR code** screen (generated with ZXing) reachable from the center button in the bottom bar; amount-aware and updates live
 
 ### Order History & Detail
 - List of all past orders with sorting (date / name / price)
@@ -36,8 +40,10 @@ Acro helps small store owners manage daily operations without needing an interne
 ### Dashboard
 - Home **sales card now shows live data** (today's revenue + today/week/month order counts)
 
-### General
+### Settings & General
 - Dark / light mode toggle (drawer)
+- **Settings screen** — switch **currency (USD / IDR)** app-wide, and choose a **UI scale (100–200%)** that zooms the whole interface
+- **About screen** — app info, version, and credits
 
 ## Tech Stack
 - Kotlin
@@ -46,6 +52,7 @@ Acro helps small store owners manage daily operations without needing an interne
 - Room Database (local storage)
 - ViewModel + StateFlow
 - CameraX + ML Kit Barcode Scanning
+- ZXing (payment QR generation)
 - Coil (image loading)
 
 ## Architecture
@@ -56,7 +63,7 @@ MVVM (Model - View - ViewModel)
 - **analytics/** — pure (UI-free) sales-statistics computation
 - **uiscreens/** — Compose screens and shared UI components
 - **navigation/** — NavHost graph + bottom-bar/drawer items
-- **ui/theme/** — color scheme, typography, dark-mode wrapper
+- **ui/theme/** — color scheme, typography, dark-mode wrapper, and app settings (currency + UI scale)
 
 ## Getting Started
 1. Clone the repo
@@ -73,6 +80,6 @@ MVVM (Model - View - ViewModel)
 - [x] Transaction/cart system (cart popup, stock-aware, custom order name)
 - [x] Transaction history + order detail
 - [x] Analytics (daily/weekly/monthly avg + min/max, inventory)
-- [ ] QR payment screen (stub)
+- [x] QR payment screen
+- [x] Settings (currency + UI scale) & About screens
 - [ ] Profile/account screen (stub)
-- [ ] Settings & About screens (stub)

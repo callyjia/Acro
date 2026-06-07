@@ -88,6 +88,8 @@ fun AppNavGraph(cartViewModel: ProductViewModel) {
                                 val tid = backStackEntry.arguments?.getString("tid")?.toIntOrNull() ?: 0
                                 OrderDetail(navController = navController, tid = tid)
                             }
+                            composable("settings") { SettingScreen(navController) }
+                            composable("about") { AboutScreen(navController) }
                         }
                     }
                 }

@@ -149,7 +149,8 @@ fun TodaySale(
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
-                        text = "CNY.", color = MaterialTheme.colorScheme.onPrimary,
+                        text = LocalSettings.current.currency.symbol + " ",
+                        color = MaterialTheme.colorScheme.onPrimary,
                         fontSize = 16.sp, fontWeight = FontWeight.Bold
                     )
                     Text(

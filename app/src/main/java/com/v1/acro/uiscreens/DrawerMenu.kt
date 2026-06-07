@@ -114,12 +114,12 @@ fun DrawerMenu(navController: NavController) {
             DrawerMenuItem(
                 icon = Icons.Default.Settings,
                 label = "Settings",
-                onClick = { /* TODO: navController.navigate("settings") */ }
+                onClick = { navController.navigate("settings") }
             )
             DrawerMenuItem(
                 icon = Icons.Default.Info,
                 label = "About",
-                onClick = { /* TODO: navController.navigate("about") */ }
+                onClick = { navController.navigate("about") }
             )
 
             // App version pinned to bottom

@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
  *
  * @param tid auto-incremented primary key
  * @param name product display name
- * @param price product price in CNY
+ * @param price product price (formatted per the app's selected currency)
  * @param quantity current stock count
  * @param imageUri local file path of product photo (nullable)
  * @param barcode scanned barcode value (nullable)

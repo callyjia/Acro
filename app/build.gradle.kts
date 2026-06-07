@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.camerax.camera2)
     implementation(libs.camerax.lifecycle)
     implementation(libs.camerax.view)
+    implementation(libs.zxing.core)
     implementation(libs.activity.compose)
     ksp(libs.room.compiler)
 }

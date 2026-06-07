@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.v1.acro.database.Transaction.TransactionItemData
+import com.v1.acro.ui.theme.money
 import com.v1.acro.viewmodel.TransactionViewModel
 
 /**
@@ -29,7 +30,7 @@ import com.v1.acro.viewmodel.TransactionViewModel
  *   - order id
  *   - timestamp
  *   - every line item (name, qty, unit price, line total)
- *   - order total
+ *   - ortder total
  *
  * NAVIGATION:
  *   Route: "OrderDetail/{tid}"
@@ -149,7 +150,7 @@ fun OrderDetail(
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = "CNY ${transaction.total}",
+                text = money(transaction.total),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -206,13 +207,13 @@ private fun OrderItemRow(item: TransactionItemData) {
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "CNY ${item.price} x ${item.quantity}",
+                    text = "${money(item.price)} x ${item.quantity}",
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             }
             Text(
-                text = "CNY ${item.price * item.quantity}",
+                text = money(item.price * item.quantity),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface

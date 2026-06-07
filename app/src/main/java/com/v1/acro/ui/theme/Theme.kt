@@ -3,6 +3,8 @@ package com.v1.acro.ui.theme
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 
 /**
  * ============================================================
@@ -102,6 +104,8 @@ private val DarkColorScheme = darkColorScheme(
 @Composable
 fun AcroTheme(content: @Composable () -> Unit) {
     var isDarkMode by remember { mutableStateOf(false) }
+    var currency by remember { mutableStateOf(Currency.IDR) }
+    var uiScale by remember { mutableStateOf(1.0f) }
 
     val themeState = remember(isDarkMode) {
         ThemeState(
@@ -110,9 +114,24 @@ fun AcroTheme(content: @Composable () -> Unit) {
         )
     }
 
-    val colorScheme = if (isDarkMode) DarkColorScheme else LightColorScheme
+    val settingsState = remember(currency, uiScale) {
+        SettingsState(
+            currency = currency,
+            uiScale = uiScale,
+            setCurrency = { currency = it },
+            setUiScale = { uiScale = it }
+        )
+    }
 
-    CompositionLocalProvider(LocalThemeState provides themeState) {
+    val colorScheme = if (isDarkMode) DarkColorScheme else LightColorScheme
+    val baseDensity = LocalDensity.current
+
+    CompositionLocalProvider(
+        LocalThemeState provides themeState,
+        LocalSettings provides settingsState,
+        // UI scale: zoom the whole UI by overriding the density
+        LocalDensity provides Density(baseDensity.density * uiScale, baseDensity.fontScale)
+    ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = Typography,

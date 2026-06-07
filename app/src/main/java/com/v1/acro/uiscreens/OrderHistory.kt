@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.v1.acro.database.Transaction.TransactionData
+import com.v1.acro.ui.theme.money
 import com.v1.acro.viewmodel.TransactionViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -203,7 +204,7 @@ fun HistoryCard(transaction: TransactionData,onClick:()->Unit) {
                 )
             }
             Text(
-                text = "CNY ${transaction.total}",
+                text = money(transaction.total),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface

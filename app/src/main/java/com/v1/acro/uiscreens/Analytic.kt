@@ -16,7 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.v1.acro.analytics.PeriodStats
 import com.v1.acro.analytics.computeSalesSummary
-import com.v1.acro.analytics.formatMoney
+import com.v1.acro.ui.theme.money
 import com.v1.acro.viewmodel.ProductViewModel
 import com.v1.acro.viewmodel.TransactionViewModel
 
@@ -85,7 +85,7 @@ fun Analytic(
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 MetricCard(
                     label = "Total Revenue",
-                    value = "CNY ${formatMoney(summary.totalRevenue)}",
+                    value = money(summary.totalRevenue),
                     modifier = Modifier.weight(1f),
                     highlight = true
                 )
@@ -99,9 +99,9 @@ fun Analytic(
             // Order value avg / min / max
             SectionLabel("Order Value")
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                MetricCard("Average", "CNY ${formatMoney(summary.avgOrderValue)}", Modifier.weight(1f))
-                MetricCard("Min", "CNY ${formatMoney(summary.minOrderValue)}", Modifier.weight(1f))
-                MetricCard("Max", "CNY ${formatMoney(summary.maxOrderValue)}", Modifier.weight(1f))
+                MetricCard("Average", money(summary.avgOrderValue), Modifier.weight(1f))
+                MetricCard("Min", money(summary.minOrderValue), Modifier.weight(1f))
+                MetricCard("Max", money(summary.maxOrderValue), Modifier.weight(1f))
             }
 
             // By period
@@ -125,7 +125,7 @@ fun Analytic(
                 )
                 MetricCard(
                     label = "Stock Value",
-                    value = "CNY ${formatMoney(inventoryValue)}",
+                    value = money(inventoryValue),
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -233,7 +233,7 @@ private fun StatColumn(label: String, value: Double, modifier: Modifier = Modifi
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
-            text = formatMoney(value),
+            text = money(value),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface

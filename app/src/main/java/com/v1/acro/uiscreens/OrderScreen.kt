@@ -16,8 +16,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import android.widget.Toast
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import coil.compose.AsyncImage
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -79,6 +83,7 @@ fun OrderScreen(
     val cartItems = cartViewModel.cartItems
     var orderName by remember { mutableStateOf("") }
     var showCart by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -98,7 +103,16 @@ fun OrderScreen(
         BarcodeScannerButton(
             onBarcodeScanned = { scannedValue ->
                 val match = products.find { it.barcode == scannedValue }
-                if (match != null) cartViewModel.addToCart(match)
+                if (match != null) {
+                    cartViewModel.addToCart(match)
+                    Toast.makeText(context, "Added ${match.name}", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(
+                        context,
+                        "No product with barcode $scannedValue",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -246,7 +260,7 @@ fun CartDialog(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "CNY $totalPrice",
+                            text = money(totalPrice),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -290,12 +304,21 @@ fun ProductPickerCard(product: ProductData, onClick: () -> Unit) {
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.Image,
-                    contentDescription = product.name,
-                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
-                    modifier = Modifier.size(28.dp)
-                )
+                if (product.imageUri != null) {
+                    AsyncImage(
+                        model = product.imageUri,
+                        contentDescription = product.name,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Image,
+                        contentDescription = product.name,
+                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -308,7 +331,7 @@ fun ProductPickerCard(product: ProductData, onClick: () -> Unit) {
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "CNY ${product.price}",
+                text = money(product.price),
                 fontSize = 10.sp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
@@ -361,7 +384,7 @@ fun CartItemRow(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "CNY ${item.product.price} x ${item.quantity} = ${item.product.price * item.quantity}",
+                    text = "${money(item.product.price)} x ${item.quantity} = ${money(item.product.price * item.quantity)}",
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
@@ -458,7 +481,7 @@ fun CheckoutBar(
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )
             Text(
-                text = "CNY $totalPrice",
+                text = money(totalPrice),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
