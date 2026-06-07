@@ -115,6 +115,17 @@ fun OrderScreen(
                 }
             }
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = orderName,
+            onValueChange = { orderName = it },
+            label = { Text("Order name (optional)") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+
         Spacer(modifier = Modifier.height(16.dp))
 
         // Available products to tap and add
@@ -135,19 +146,8 @@ fun OrderScreen(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Optional custom order name (blank → "order{id}")
-        OutlinedTextField(
-            value = orderName,
-            onValueChange = { orderName = it },
-            label = { Text("Order name (optional)") },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
         // Checkout bar (cart icon + total + button)
         CheckoutBar(
@@ -174,6 +174,8 @@ fun OrderScreen(
             onDismiss = { showCart = false }
         )
     }
+
+
 }
 
 /**
