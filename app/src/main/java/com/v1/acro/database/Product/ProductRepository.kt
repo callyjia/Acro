@@ -5,6 +5,9 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Middleman between ViewModel and Dao
  * ViewModel never talks to Dao directly
+ *
+ * UPDATE NOTE: unchanged this update. See TransactionRepository for the new
+ * order + line-item persistence added alongside the checkout flow.
  */
 class ProductRepository(private val productDao: ProductDao) {
 

@@ -32,6 +32,20 @@ import androidx.compose.runtime.CompositionLocalProvider
 import com.v1.acro.viewmodel.ProductViewModel
 
 
+/**
+ * ============================================================
+ * AppNavGraph.kt
+ * ============================================================
+ *
+ * App-wide navigation: NavHost routes + bottom bar + drawer + header.
+ *
+ * UPDATE NOTE — routes added this update:
+ *   - "OrderDetail/{tid}" → OrderDetail screen (order line items)
+ *   - "Analytics"         → real Analytic dashboard
+ *   (existing: home, order, receipt, Product, AddProduct, Account, QrPayment,
+ *    productDetail/{pid})
+ * ============================================================
+ */
 @Composable
 fun AppNavGraph(cartViewModel: ProductViewModel) {
     val navController = rememberNavController()
@@ -66,6 +80,14 @@ fun AppNavGraph(cartViewModel: ProductViewModel) {
                             composable("AddProduct") { AddProduct(navController) }
                             composable("Account") { ProfileAcc(navController) }
                             composable("QrPayment") { QrPayment(navController) }
+                            composable("productDetail/{pid}") { backStackEntry ->
+                                val pid = backStackEntry.arguments?.getString("pid")?.toIntOrNull() ?: 0
+                                ProductDetail(navController = navController, pid = pid)
+                            }
+                            composable("OrderDetail/{tid}") { backStackEntry ->
+                                val tid = backStackEntry.arguments?.getString("tid")?.toIntOrNull() ?: 0
+                                OrderDetail(navController = navController, tid = tid)
+                            }
                         }
                     }
                 }

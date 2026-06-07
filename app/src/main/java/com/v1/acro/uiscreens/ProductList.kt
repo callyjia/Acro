@@ -46,9 +46,12 @@ import com.v1.acro.viewmodel.ProductViewModel
  *   - Auto-updates when a product is added/deleted
  *   - Filtering done in-memory on the collected list
  *
+ * UPDATE NOTE:
+ *   - ProductDetail navigation on card click is wired.
+ *   - Stock turns red (error color) when quantity is 0 (ProductCard).
+ *
  * TODO:
- *   - Add product image loading (Coil/Glide)
- *   - Add ProductDetail navigation on card click
+ *   - Show the captured product photo (Coil AsyncImage) instead of the placeholder icon
  *   - Add price range filter
  *
  * NAVIGATION:
@@ -116,7 +119,7 @@ fun ProductList(
                 products = filteredProducts,
                 columns = columns,
                 onProductClick = { product ->
-                    // TODO: navController.navigate("productDetail/${product.pid}")
+                    navController.navigate("productDetail/${product.pid}")
                 }
             )
         }

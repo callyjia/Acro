@@ -39,6 +39,9 @@ import androidx.compose.ui.graphics.Color
  *   onSurface       → text/icons on cards (MidBlue in light, White in dark)
  *   outline         → dividers, unfocused borders, switch track
  *   error           → out of stock text
+ *
+ * UPDATE NOTE: unchanged this update. `error` now also drives the "Out of stock"
+ * label in OrderScreen's product picker and the Analytics out-of-stock metric.
  * ============================================================
  */
 

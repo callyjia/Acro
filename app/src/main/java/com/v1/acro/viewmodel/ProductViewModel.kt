@@ -16,6 +16,9 @@ import kotlinx.coroutines.launch
  * Usage:
  *   val viewModel: ProductViewModel = viewModel()
  *   val products by viewModel.allProducts.collectAsState()
+ *
+ * UPDATE NOTE: unchanged this update. allProducts now also feeds the Analytics
+ * inventory stats and the stock-aware product picker in OrderScreen.
  */
 class ProductViewModel(application: Application) : AndroidViewModel(application) {
 

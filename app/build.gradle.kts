@@ -64,6 +64,10 @@ dependencies {
     implementation(libs.room.ktx)
     implementation(libs.coil.compose)
     implementation(libs.mlkit.barcode)
+    implementation(libs.camerax.core)
+    implementation(libs.camerax.camera2)
+    implementation(libs.camerax.lifecycle)
+    implementation(libs.camerax.view)
     implementation(libs.activity.compose)
     ksp(libs.room.compiler)
 }

@@ -17,10 +17,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.v1.acro.analytics.computeSalesSummary
+import com.v1.acro.analytics.formatMoney
 import com.v1.acro.navigation.Item
 import com.v1.acro.ui.theme.*
 import androidx.compose.foundation.BorderStroke
+import com.v1.acro.viewmodel.TransactionViewModel
 
 /**
  * ============================================================
@@ -37,13 +41,13 @@ import androidx.compose.foundation.BorderStroke
  *           └── TaskCard  → single shortcut (dynamic from Item list)
  *
  * DATA:
- *   - Sales data is currently hardcoded
  *   - Task items are pulled from Item sealed class
  *
- * TODO:
- *   - Replace hardcoded sales with ViewModel + Room DB
- *   - Add pull-to-refresh for live sales data
- *   - Add daily/weekly/monthly chart to TodaySale
+ * UPDATE NOTE:
+ *   - The sales card is now LIVE: today's revenue + today/week/month order counts
+ *     come from TransactionViewModel via computeSalesSummary() (analytics/).
+ *     The old hardcoded values were removed.
+ *   - For full stats (avg/min/max, inventory) see the Analytics screen.
  *
  * NAVIGATION:
  *   Route: "home" (startDestination in NavHost)
@@ -57,12 +61,19 @@ import androidx.compose.foundation.BorderStroke
  * Initializes sales data and task items, lays out dashboard
  */
 @Composable
-fun HomeScreen(navController: NavController) {
-    // TODO: Replace with ViewModel observeAsState() when Room DB is ready
-    val todaySales = "1,250.00"
-    val transactionDaily = 24
-    val transactionMonth = 200
-    val transactionWeek = 50
+fun HomeScreen(
+    navController: NavController,
+    transactionViewModel: TransactionViewModel = viewModel()
+) {
+    // Live sales data from Room — recomputes whenever orders change
+    val transactions by transactionViewModel.allTransactions.collectAsState()
+    val summary = remember(transactions) {
+        computeSalesSummary(transactions, System.currentTimeMillis())
+    }
+    val todaySales = formatMoney(summary.todayRevenue)
+    val transactionDaily = summary.ordersToday
+    val transactionMonth = summary.ordersThisMonth
+    val transactionWeek = summary.ordersThisWeek
 
     // Task shortcuts — add/remove items here to update the grid automatically
     val taskItems = listOf(

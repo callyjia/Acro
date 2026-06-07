@@ -16,6 +16,13 @@ import com.v1.acro.ui.theme.AcroTheme
 import com.v1.acro.viewmodel.ProductViewModel
 
 
+/**
+ * MainActivity — single-activity entry point. Sets the Compose content,
+ * wraps it in AcroTheme, and hosts AppNavGraph.
+ *
+ * UPDATE NOTE: unchanged this update. The Greeting/GreetingPreview below are
+ * leftover Android Studio template code and can be deleted; they are unused.
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

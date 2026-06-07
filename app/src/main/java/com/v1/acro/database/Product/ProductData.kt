@@ -13,6 +13,10 @@ import androidx.room.PrimaryKey
  * @param quantity current stock count
  * @param imageUri local file path of product photo (nullable)
  * @param barcode scanned barcode value (nullable)
+ *
+ * UPDATE NOTE: no schema change this update, but `barcode` is now written by the
+ * barcode scanner (AddProduct) and matched in OrderScreen, and `imageUri` now holds
+ * a real captured-photo Uri.
  */
 @Entity(tableName = "products")
 data class ProductData(

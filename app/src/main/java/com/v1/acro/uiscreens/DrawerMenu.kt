@@ -37,6 +37,8 @@ import com.v1.acro.ui.theme.*
  *   - All colors use MaterialTheme for auto dark/light switching
  *   - Toggle uses primary color for brand consistency
  *
+ * UPDATE NOTE: unchanged this update. Dark/light toggle works via LocalThemeState.
+ *
  * TODO:
  *   - Build SettingsScreen (language, currency)
  *   - Build AboutScreen (app version, developer info)

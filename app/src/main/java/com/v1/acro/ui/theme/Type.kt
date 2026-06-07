@@ -5,6 +5,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.*
 import androidx.compose.ui.unit.sp
 
+/**
+ * Type.kt — Material 3 typography for AcroTheme.
+ * UPDATE NOTE: unchanged this update (still the Compose template default).
+ */
 // Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(

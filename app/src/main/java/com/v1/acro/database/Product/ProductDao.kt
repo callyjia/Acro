@@ -10,6 +10,9 @@ import androidx.room.OnConflictStrategy.Companion.ABORT
  *
  * Flow return types auto-update UI when data changes
  * suspend functions run on background thread
+ *
+ * UPDATE NOTE: unchanged this update. reduceStock() is called on checkout, and
+ * searchProducts/barcode matching backs the product list + scan-to-add flow.
  */
 @Dao
 interface ProductDao {
