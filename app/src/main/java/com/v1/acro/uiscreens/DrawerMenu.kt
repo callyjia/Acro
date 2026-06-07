@@ -39,10 +39,6 @@ import com.v1.acro.ui.theme.*
  *
  * UPDATE NOTE: unchanged this update. Dark/light toggle works via LocalThemeState.
  *
- * TODO:
- *   - Build SettingsScreen (language, currency)
- *   - Build AboutScreen (app version, developer info)
- *   - Replace hardcoded store info with stored preferences
  * ============================================================
  */
 

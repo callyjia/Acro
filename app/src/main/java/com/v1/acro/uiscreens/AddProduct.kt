@@ -61,8 +61,6 @@ import java.io.File
  *   - Barcode scanner auto-fills productBarcode (see SharedComponents.BarcodeScannerButton).
  *   - Both camera features request the CAMERA runtime permission on demand.
  *
- * TODO:
- *   - Add input validation feedback (currently silent on invalid)
  *
  * NAVIGATION:
  *   Route: "AddProduct"
